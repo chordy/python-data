@@ -11,7 +11,8 @@ from hmmlearn import hmm
 import csv
 from lifetime_cal import life_time
 a=[]
-with open('testdata7.csv','r') as f:
+#read in data / filter/ hist
+with open('testdata.csv','r') as f:
     reader=csv.reader(f)
     for row in reader:
         a.append(float(row[0]))
@@ -25,3 +26,4 @@ plt.figure()
 plt.hist(aa,bins)
 plt.xlabel('Force pN')
 plt.ylabel('Count')
+plt.show()
