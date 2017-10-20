@@ -16,20 +16,27 @@ import numpy as np
 from hmmlearn import hmm
 import csv
 from lifetime_cal import life_time
-a=[]
-with open('testdata.csv','r') as f:
-    reader=csv.reader(f)
-    for row in reader:
-        a.append(float(row[0]))
+from scipy.io import loadmat 
+#a=[]
+#with open('testdata5.csv','r') as f:
+#    reader=csv.reader(f)
+#    for row in reader:
+#        a.append(float(row[0]))
+x = loadmat('N12_16_split.mat')
+data=x['pdata']
+a=data['Y_force'][0][0][0]
+aa=[]
+for i in range(2,len(a)-3):
+    aa.append(np.mean(a[i-2:i+3]))
 high_force=max(a)
 low_force=min(a)
 # initial value
 mu=[]
 sigma=[]
 tij=[]
-for seg in range(58):
-    data = np.reshape(np.array(a[1500+seg*1500:4500+seg*1500]), [-1,1]);               #data for analysis
-    stat_num=3                                                                # number of states
+for seg in range(50):
+    data = np.reshape(np.array(aa[1500+seg*1500:4500+seg*1500]), [-1,1]);               #data for analysis
+    stat_num=2                                                           # number of states
     bias=0.9                                                          # self transiton index
     interval=(high_force-low_force)/(stat_num-1)
     guess_m=[]
@@ -43,7 +50,7 @@ for seg in range(58):
             if init_tij[ii][jj]==0:
                 init_tij[ii][jj]=bias/(stat_num-1)       #finish setting init tij
     #fitting
-    model = hmm.GaussianHMM(n_components=int(stat_num), covariance_type="full")
+    model = hmm.GaussianHMM(n_components=int(stat_num), covariance_type="full",n_iter=15)
     model.startprob_ = startprob
     model.transmat_ = init_tij
     model.means_ = guess_mu
@@ -65,10 +72,10 @@ for seg in range(58):
     mu.append(temp_mu)
     sigma.append(temp_sigma)
 #    temp_tij.append(model.transmat_)
-    logL=model.score(data)
+#    !logL=model.score(data)
 #    print(temp_tij)
-    [s,t]=life_time(list(decoded[1]),3)
-    tij.append(t)
+#    [s,t]=life_time(list(decoded[1]),3)
+#    tij.append(t)
 #print(mu,t)
 #
 #plt.figure()
@@ -85,4 +92,4 @@ for aaa in mu:
 bins = np.arange(min(ss), max(ss), 0.02); #浮点数版本的range
 plt.figure()
 histed=plt.hist(ss, bins)  
-plt.title('overlap = 2000')
+plt.title('overlap = 1500')

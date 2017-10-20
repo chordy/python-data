@@ -4,6 +4,7 @@ Created on Sun Oct  1 14:48:06 2017
 state lifetime analysis
 input: state sequence, state number
 output: lifetime of each state
+modified in Oct 14, s1->s2->s3, delete very short s2, maybe form filtering
 
 @author: chord
 """
@@ -14,6 +15,9 @@ from matplotlib import pyplot as plt
 def life_time(decoded,n):
     l=len(decoded)
     ns=decoded
+    for i in range(l-10):
+        if (ns[i]!=ns[i+1])& (ns[i+1]!=ns[i+2]):
+            ns[i+1]=ns[i]
     # remove short 4-5-4 ,specific for this sample,pre-crocess
 #    i=1
 #    while i<l-2:
